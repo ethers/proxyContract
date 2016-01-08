@@ -22,22 +22,27 @@ contract Proxy {
 		}
 	}
 
-	function forward_method(address _destination, uint _value, bytes4 _methodName, bytes32[] _transactionData) public {
+	function forward_method(address _destination, uint _value, bytes4 _methodName, bytes32[] _transactionData) public returns (uint) {
 		if (msg.sender == owner) {
-			_destination.call.value(_value)(_methodName, _transactionData);
+		    bytes4 method = bytes4(sha3("register(bytes32 key, address value)"));
+		    _destination.call.value(_value)(method, _transactionData);
+
+// 			_destination.call.value(_value)(_methodName, _transactionData);
 			Forwarded(_destination, _value);
+			return 1;
 		}
+		return 0;
 	}
 }
 
 contract SimpleRegistry {
-    mapping (string => address) registry;
+    mapping (bytes32 => address) registry;
 
-    function register(string key, address value) {
+    function register(bytes32 key, address value) {
         registry[key] = value;
     }
 
-    function lookup(string key) returns (address) {
+    function lookup(bytes32 key) returns (address) {
         return registry[key];
     }
 }
