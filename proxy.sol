@@ -76,4 +76,37 @@ dest='0x5a63738e866969b29989bfb97df6307b1f5602d2'
 val = 0
 pcon.forward_method.sendTransaction(dest, val, 0, ["tes", "0xf952b12ee562238}
 
+
+Registering on created registry
+
+var abi = [{
+  name: 'register',
+  type: 'function',
+  constant: false,
+  inputs: [{
+    name: 'key',
+    type: 'bytes32'
+  }],
+  outputs: [{
+    name: 'addr',
+    type: 'address'
+  }]
+}, {
+  name: 'isRegistered',
+  type: 'function',
+  constant: true,
+  inputs: [{
+    name: 'name',
+    type: 'bytes32'
+  }],
+  outputs: [{
+    name: 'result',
+    type: 'bool'
+  }]
+}]
+
+web3.eth.contract(abi).at('0x5a63738e866969b29989bfb97df6307b1f5602d2').register('some', '0x5a63738e866969b29989bfb97df6307b1f5602d2', {gas:2100000})
+
+web3.eth.contract(abi).at('0x5a63738e866969b29989bfb97df6307b1f5602d2').isRegistered().call('test')
+
 */
