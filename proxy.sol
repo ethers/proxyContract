@@ -49,3 +49,5 @@ contract SimpleRegistry {
 
 // args for Solidity browser
 // "0x692a70d2e424a56d2c6c27aa97d1a86395877b3a", 0, 0, ["0xcde", "0x1234567890123456789012345678901234567890"]
+
+// https://chriseth.github.io/browser-solidity/?gist=e6d8e79383f4ba57cbcb
