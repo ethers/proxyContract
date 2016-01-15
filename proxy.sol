@@ -74,7 +74,7 @@ pcon = proxyContract.at('0xf952b12ee5622382ab16e9987d190a2bffdd1b19')
 eth.defaultAccount = eth.coinbase
 dest='0x5a63738e866969b29989bfb97df6307b1f5602d2'
 val = 0
-pcon.forward_method.sendTransaction(dest, val, 0, ["tes", "0xf952b12ee562238}
+pcon.forward_method.sendTransaction(dest, val, 0, ["te", 5], {gas:2100000})
 
 
 Registering on created registry
