@@ -22,10 +22,10 @@ contract Proxy {
 		}
 	}
 
-	function forward_method(address _destination, uint _value, bytes4 _methodName, bytes32[] _transactionData) public returns (uint) {
+	function forward_method(address _destination, uint _gas, uint _value, bytes4 _methodName, bytes32[] _transactionData) public returns (uint) {
 		if (msg.sender == owner) {
 		    bytes4 method = bytes4(sha3("register(bytes32,address)"));
-		    _destination.call.value(_value)(method, _transactionData);
+		    _destination.call.gas(_gas).value(_value)(method, _transactionData);
 
 // 			_destination.call.value(_value)(_methodName, _transactionData);
 			Forwarded(_destination, _value);
@@ -74,7 +74,7 @@ pcon = proxyContract.at('0xf952b12ee5622382ab16e9987d190a2bffdd1b19')
 eth.defaultAccount = eth.coinbase
 dest='0x5a63738e866969b29989bfb97df6307b1f5602d2'
 val = 0
-pcon.forward_method.sendTransaction(dest, val, 0, ["te", 5], {gas:2100000})
+pcon.forward_method.sendTransaction(dest, 2100000, val, 0, ["te", 5], {gas:2100000})
 
 
 Registering on created registry
