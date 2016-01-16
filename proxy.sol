@@ -22,16 +22,35 @@ contract Proxy {
 		}
 	}
 
+/*
 	function forward_method(bytes32[] _transactionData, address _destination, uint _value, bytes4 _methodName) public returns (uint) {
-		/*if (msg.sender == owner) {*/
+		if (msg.sender == owner) {
 		    bytes4 method = bytes4(sha3("register(bytes32,address)"));
 		    _destination.call.value(_value)(method, _transactionData);
 
 // 			_destination.call.value(_value)(_methodName, _transactionData);
-			/*Forwarded(_destination, _value);*/
+			Forwarded(_destination, _value);
 			return 1;
-		/*}
-		return 0;*/
+		}
+		return 0;
+	}
+*/
+
+
+	function register(bytes32 _key, address _addr, address _destination, uint _value, bytes4 _methodName) public returns (uint) {
+		bytes4 method = bytes4(sha3("register(bytes32,address)"));
+
+		bytes32[] data;
+		data.push(_key);
+		data.push(bytes32(_addr));
+		_destination.call.value(_value)(method, data);
+		return 1;
+	}
+
+	function unregister(bytes32 _key, address _destination, uint _value, bytes4 _methodName) public returns (uint) {
+    bytes4 method = bytes4(sha3("unregister(bytes32)"));
+    _destination.call.value(_value)(method, _key);
+		return 1;
 	}
 }
 
@@ -68,7 +87,7 @@ var proxy = proxyContract.new(
     }
  })
 
-pAr='0xf3a202c6c95c8ea2982edbe387b774c0f6637ccb'
+pAr=''
 
 pcon=proxyContract.at(pAr)
 eth.defaultAccount = eth.coinbase
@@ -77,11 +96,14 @@ val = 0
 pcon.forward_method.sendTransaction(["te", 5], dest, val, 0, {gas:2100000})
 pcon.forward_method.call(["te", 5], dest, val, 0, {gas:2100000})
 
+For unregister:
+pcon.forward_method.call(["te"], dest, val, 0, {gas:2100000})
+
+
 
 Registering on created registry
 
-var abi=[{"name":"register","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"addr","type":"address"}],"outputs":[]},{"name":"isRegistered","type":"function","constant":true,"inputs":[{"name":"name","type":"bytes32"}],"outputs":[{"name":"result","type":"bool"}]}];
-
+var abi=[{"name":"unregister","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"}],"outputs":[]},{"name":"register","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"addr","type":"address"}],"outputs":[]},{"name":"isRegistered","type":"function","constant":true,"inputs":[{"name":"name","type":"bytes32"}],"outputs":[{"name":"result","type":"bool"}]}];
 web3.eth.contract(abi).at('0x5a63738e866969b29989bfb97df6307b1f5602d2').register('0x123', '0x5a63738e866969b29989bfb97df6307b1f5602d2', {gas:2100000})
 
 web3.eth.contract(abi).at('0x5a63738e866969b29989bfb97df6307b1f5602d2').isRegistered().call('test')
