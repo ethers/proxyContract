@@ -131,7 +131,7 @@ var proxy = proxyContract.new(
     }
  })
 
-pAr=''
+pAr='0x38c94d309a3eb62ed95735b305ee076c2d50087d'
 
 pcon=proxyContract.at(pAr)
 eth.defaultAccount = eth.coinbase
