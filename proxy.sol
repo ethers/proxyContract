@@ -3,6 +3,7 @@ contract Proxy {
 	event TransferOwnership(address _new_owner);
 
 	address public owner;
+	bytes public callData;
 
 	function Proxy() {
 		owner = msg.sender;
@@ -38,20 +39,60 @@ contract Proxy {
 
 
 	function register(bytes32 _key, address _addr, address _destination, uint _value, bytes4 _methodName) public returns (uint) {
-		bytes4 method = bytes4(sha3("register(bytes32,address)"));
+        bytes4 method = bytes4(sha3("register(bytes32,address)"));
 
-		bytes32[] data;
-		data.push(_key);
-		data.push(bytes32(_addr));
-		_destination.call.value(_value)(method, data);
+        bytes memory keyBytes = b32ToBytes(_key);
+        bytes memory addrBytes = b32ToBytes(bytes32(_addr));
+
+        uint8 i;
+        for (i = 0; i < 32; i++) {
+            callData[i] = keyBytes[i];
+        }
+
+        for (i = 32; i < 64; i++) {
+            callData[i] = addrBytes[i];
+        }
+
+        _destination.call.value(_value)(method, callData);
+
 		return 1;
 	}
 
 	function unregister(bytes32 _key, address _destination, uint _value, bytes4 _methodName) public returns (uint) {
-    bytes4 method = bytes4(sha3("unregister(bytes32)"));
-    _destination.call.value(_value)(method, _key);
+        bytes4 method = bytes4(sha3("unregister(bytes32)"));
+        _destination.call.value(_value)(method, _key);
 		return 1;
 	}
+
+	// this and other helper functions are
+	// from https://github.com/iudex/iudex/blob/master/contracts/accountProviderBase.sol
+    function b32ToBytes(bytes32 input) internal returns (bytes) {
+        uint tmp = uint(input);
+
+        string memory holder = new string(64);
+        bytes memory ret = bytes(holder);
+
+        // NOTE: this is written in an expensive way, as out-of-order array access
+        //       is not supported yet, e.g. we cannot go in reverse easily
+        //       (or maybe it is a bug: https://github.com/ethereum/solidity/issues/212)
+        uint j = 0;
+        for (uint i = 0; i < 32; i++) {
+          uint _tmp = tmp / (2 ** (8*(31-i))); // shr(tmp, 8*(19-i))
+          uint nb1 = (_tmp / 0x10) & 0x0f;     // shr(tmp, 8) & 0x0f
+          uint nb2 = _tmp & 0x0f;
+          ret[j++] = byte(nibbleToChar(nb1));
+          ret[j++] = byte(nibbleToChar(nb2));
+        }
+
+        return ret;
+    }
+
+    function nibbleToChar(uint nibble) internal returns (uint ret) {
+        if (nibble > 9)
+          return nibble + 87; // nibble + 'a'- 10
+        else
+          return nibble + 48; // '0'
+    }
 }
 
 contract SimpleRegistry {
@@ -93,6 +134,9 @@ pcon=proxyContract.at(pAr)
 eth.defaultAccount = eth.coinbase
 dest='0x5a63738e866969b29989bfb97df6307b1f5602d2'
 val = 0
+
+pcon.register.call("te", 5, dest, val, 0, {gas:2100000})
+
 pcon.forward_method.sendTransaction(["te", 5], dest, val, 0, {gas:2100000})
 pcon.forward_method.call(["te", 5], dest, val, 0, {gas:2100000})
 
