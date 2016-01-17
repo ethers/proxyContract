@@ -3,7 +3,6 @@ contract Proxy {
 	event TransferOwnership(address _new_owner);
 
 	address public owner;
-	bytes public callData;
 
 	function Proxy() {
 		owner = msg.sender;
@@ -43,6 +42,9 @@ contract Proxy {
 
 		bytes memory keyBytes = b32ToBytes(_key);
 		bytes memory addrBytes = b32ToBytes(bytes32(_addr));
+
+		string memory holder = new string(64);
+		bytes memory callData = bytes(holder);
 
 		uint8 i;
 		for (i = 0; i < 32; i++) {
