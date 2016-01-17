@@ -78,10 +78,11 @@ contract Proxy {
         uint j = 0;
         for (uint i = 0; i < 32; i++) {
           uint _tmp = tmp / (2 ** (8*(31-i))); // shr(tmp, 8*(19-i))
-          uint nb1 = (_tmp / 0x10) & 0x0f;     // shr(tmp, 8) & 0x0f
-          uint nb2 = _tmp & 0x0f;
-          ret[j++] = byte(nibbleToChar(nb1));
-          ret[j++] = byte(nibbleToChar(nb2));
+					uint nb1 = (_tmp / 0x10) & 0x0f;     // shr(tmp, 8) & 0x0f
+					uint nb2 = _tmp & 0x0f;
+					ret[j++] = byte(nb1*16 + nb2);
+          //ret[j++] = byte(nibbleToChar(nb1));
+          //ret[j++] = byte(nibbleToChar(nb2));
         }
 
         return ret;
