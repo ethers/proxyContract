@@ -143,7 +143,11 @@ eth.defaultAccount = eth.coinbase
 dest='0x91a6a893d2993c2f469fa33af4024b96789e30f1'
 val = 0
 
-pcon.register.call("te", 5, dest, val, 0, {gas:2100000})
+pcon.register.call("test", 5, dest, val, 0, {gas:2100000})
+pcon.unregister.call("test", dest, val, 0, {gas:2100000})
+
+pcon.register.sendTransaction("test", 5, dest, val, 0, {gas:2100000})
+pcon.unregister.sendTransaction("test", dest, val, 0, {gas:2100000})
 
 pcon.forward_method.sendTransaction(["te", 5], dest, val, 0, {gas:2100000})
 pcon.forward_method.call(["te", 5], dest, val, 0, {gas:2100000})
