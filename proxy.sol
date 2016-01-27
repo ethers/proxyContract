@@ -149,8 +149,8 @@ pcon.unregister.call("test", dest, val, 0, {gas:2100000})
 pcon.register.sendTransaction("test", 5, dest, val, 0, {gas:2100000})
 pcon.unregister.sendTransaction("test", dest, val, 0, {gas:2100000})
 
-pcon.forward_method.sendTransaction(["te", 5], dest, val, 0, {gas:2100000})
 pcon.forward_method.call(["te", 5], dest, val, 0, {gas:2100000})
+pcon.forward_method.sendTransaction(["te", 5], dest, val, 0, {gas:2100000})
 
 For unregister:
 pcon.forward_method.call(["te"], dest, val, 0, {gas:2100000})
@@ -159,10 +159,12 @@ pcon.forward_method.call(["te"], dest, val, 0, {gas:2100000})
 
 Registering on created registry
 
-var abi=[{"name":"unregister","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"}],"outputs":[]},{"name":"register","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"addr","type":"address"}],"outputs":[]},{"name":"isRegistered","type":"function","constant":true,"inputs":[{"name":"name","type":"bytes32"}],"outputs":[{"name":"result","type":"bool"}]}];
-web3.eth.contract(abi).at('0x5a63738e866969b29989bfb97df6307b1f5602d2').register('0x123', '0x5a63738e866969b29989bfb97df6307b1f5602d2', {gas:2100000})
+var abi=[{"name":"getRecord","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"}],"outputs":[{"name":"owner","type":"address"},{"name":"time","type":"uint"},{"name":"addr","type":"address"}]},{"name":"unregister","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"}],"outputs":[]},{"name":"register","type":"function","constant":false,"inputs":[{"name":"key","type":"bytes32"},{"name":"addr","type":"address"}],"outputs":[]},{"name":"isRegistered","type":"function","constant":true,"inputs":[{"name":"name","type":"bytes32"}],"outputs":[{"name":"result","type":"bool"}]}];
+web3.eth.contract(abi).at('0x91a6a893d2993c2f469fa33af4024b96789e30f1').getRecord.call('test')
 
-web3.eth.contract(abi).at('0x5a63738e866969b29989bfb97df6307b1f5602d2').isRegistered().call('test')
+web3.eth.contract(abi).at('0x91a6a893d2993c2f469fa33af4024b96789e30f1').register('0x123', '0x5a63738e866969b29989bfb97df6307b1f5602d2', {gas:2100000})
+
+web3.eth.contract(abi).at('0x91a6a893d2993c2f469fa33af4024b96789e30f1').isRegistered().call('test')
 
 working log, register "uitest" with value 13:
 eth_sendTransaction [{"from":"0x9fc6fefd7f33ca29ee17f2bfec944695e5f29caf","value":"0x0","gas":"0x2dc6c0","to":"0x5a63738e866969b29989bfb97df6307b1f5602d2","data":"0xd22057a97569746573740000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000d"}]
